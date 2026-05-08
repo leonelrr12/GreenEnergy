@@ -459,24 +459,24 @@
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
 
-    <!-- CHATBOT CORREGIDO -->
+    <!-- ==================== CHATBOT COMPLETO ==================== -->
     <div
       class="chat-launcher"
       id="chatLauncher"
-      style="position: fixed; bottom: 30px; right: 30px; z-index: 99999"
+      style="position: fixed; bottom: 30px; right: 25px; z-index: 99999"
     >
       <button
         class="launcher-btn"
         id="toggleChat"
         style="
-          width: 75px;
-          height: 75px;
+          width: 70px;
+          height: 70px;
           border-radius: 50%;
           background: #25d366;
           color: white;
           border: none;
-          font-size: 34px;
-          box-shadow: 0 8px 30px rgba(37, 211, 102, 0.6);
+          font-size: 32px;
+          box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
         "
       >
         💬
@@ -487,15 +487,16 @@
         style="
           display: none;
           position: fixed;
-          bottom: 50px;
-          right: 30px;
+          bottom: 120px;
+          right: 25px;
           width: 380px;
-          height: 650px;
+          height: 620px;
           background: white;
           border-radius: 20px;
           box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
           overflow: hidden;
           z-index: 100000;
+          flex-direction: column;
         "
       >
         <!-- Header -->
@@ -548,9 +549,10 @@
           style="flex: 1; padding: 15px; overflow-y: auto; background: #f8f9fa"
         ></div>
 
+        <!-- Progress -->
         <div
           style="
-            padding: 10px 15px;
+            padding: 8px 15px;
             background: #f1f1f1;
             border-top: 1px solid #ddd;
           "
@@ -565,6 +567,7 @@
           <small id="step-hint" class="text-muted">Paso 1 de 6</small>
         </div>
 
+        <!-- Input Area -->
         <div
           id="input-area"
           style="padding: 12px; background: white; border-top: 1px solid #ddd"
@@ -574,6 +577,9 @@
 
     <script>
       // ==================== CHATBOT INTELIGENTE ====================
+      const SCRIPT_URL =
+        "https://script.google.com/macros/s/AKfycbyynxAFjw8ijV5L0TpRvEYePYer2Gxg8MpscvamiotIj9fD1M9GijIVKmeF6cXfoyLc/exec";
+
       const steps = [
         {
           key: "nombre",
@@ -612,12 +618,12 @@
         },
         {
           key: "interes",
-          bot: "¡Genial! ¿Qué tan interesado estás en instalar paneles solares?",
+          bot: "¡Genial! ¿Qué tan interesado estás?",
           type: "options",
           options: [
-            "🔥 Quiero el máximo ahorro",
-            "🤔 Quiero información y precios",
-            "👀 Solo estoy explorando",
+            "🔥 Quiero máximo ahorro",
+            "🤔 Quiero precios",
+            "👀 Solo explorando",
           ],
         },
       ];
@@ -633,31 +639,25 @@
       const closeChat = document.getElementById("closeChat");
       const chatPopup = document.getElementById("chat-popup");
 
-      toggleChat.addEventListener("click", () => {
-        chatPopup.style.display =
-          chatPopup.style.display === "flex" ? "none" : "flex";
-        if (chatPopup.style.display === "flex" && step === 0) initChat();
-      });
-
-      closeChat.addEventListener("click", () => {
-        chatPopup.style.display = "none";
-      });
+      function scrollToBottom() {
+        msgsEl.scrollTop = msgsEl.scrollHeight;
+      }
 
       function addMsg(text, type) {
         const div = document.createElement("div");
         div.className = `msg ${type}`;
         div.textContent = text;
         msgsEl.appendChild(div);
-        msgsEl.scrollTop = msgsEl.scrollHeight;
+        scrollToBottom();
       }
 
       function showTyping() {
         return new Promise((resolve) => {
           const typing = document.createElement("div");
           typing.className = "msg bot";
-          typing.innerHTML = "escribiendo...";
+          typing.textContent = "escribiendo...";
           msgsEl.appendChild(typing);
-          msgsEl.scrollTop = msgsEl.scrollHeight;
+          scrollToBottom();
           setTimeout(() => {
             typing.remove();
             resolve();
@@ -671,36 +671,36 @@
         stepHint.textContent = `Paso ${step + 1} de ${steps.length}`;
       }
 
-      function renderInput(currentStep) {
+      function renderInput(s) {
         inputEl.innerHTML = "";
-        if (currentStep.type === "text") {
-          const input = document.createElement("input");
-          input.type = "text";
-          input.placeholder = currentStep.placeholder;
-          input.className = "form-control mb-2";
+        if (s.type === "text") {
+          const inp = document.createElement("input");
+          inp.type = "text";
+          inp.placeholder = s.placeholder;
+          inp.className = "form-control mb-2";
 
           const btn = document.createElement("button");
           btn.className = "btn btn-success w-100";
           btn.textContent = "Enviar";
           btn.onclick = () => {
-            if (input.value.trim()) handleAnswer(input.value.trim());
+            if (inp.value.trim()) handleAnswer(inp.value.trim());
           };
 
-          input.onkeypress = (e) => {
+          inp.onkeydown = (e) => {
             if (e.key === "Enter") btn.click();
           };
 
-          inputEl.appendChild(input);
+          inputEl.appendChild(inp);
           inputEl.appendChild(btn);
-          setTimeout(() => input.focus(), 300);
-        } else if (currentStep.type === "options") {
+          setTimeout(() => inp.focus(), 100);
+        } else if (s.type === "options") {
           const wrap = document.createElement("div");
-          currentStep.options.forEach((opt) => {
-            const btn = document.createElement("button");
-            btn.className = "btn btn-outline-success w-100 mb-2";
-            btn.textContent = opt;
-            btn.onclick = () => handleAnswer(opt);
-            wrap.appendChild(btn);
+          s.options.forEach((opt) => {
+            const b = document.createElement("button");
+            b.className = "btn btn-outline-success w-100 mb-2";
+            b.textContent = opt;
+            b.onclick = () => handleAnswer(opt);
+            wrap.appendChild(b);
           });
           inputEl.appendChild(wrap);
         }
@@ -724,7 +724,7 @@
         } else {
           await showTyping();
           addMsg(
-            "¡Perfecto! 🎉 Un asesor te contactará pronto con tu cotización personalizada.",
+            "¡Perfecto! 🎉 Un asesor te contactará pronto con tu cotización.",
             "bot",
           );
         }
@@ -739,6 +739,16 @@
         addMsg(steps[0].bot, "bot");
         renderInput(steps[0]);
       }
+
+      toggleChat.addEventListener("click", () => {
+        chatPopup.style.display =
+          chatPopup.style.display === "flex" ? "none" : "flex";
+        if (chatPopup.style.display === "flex" && step === 0) initChat();
+      });
+
+      closeChat.addEventListener("click", () => {
+        chatPopup.style.display = "none";
+      });
     </script>
 
     <script>
