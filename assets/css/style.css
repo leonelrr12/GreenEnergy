@@ -8,6 +8,30 @@
   --warning: #ffb300;
 }
 
+body {
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.display-3,
+.display-4 {
+  font-weight: 800;
+}
+
 /* Cambios generales */
 .btn-success,
 .bg-success,
