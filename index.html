@@ -1473,6 +1473,7 @@
         ></div>
       </div>
     </div>
+    <!-- ChatBot End -->
 
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -1490,6 +1491,9 @@
 
     <script>
       // ==================== CHATBOT CON VALIDACIONES FUERTES ====================
+      const URL_DE_APPS_SCRIPT_AQUI =
+        "https://script.google.com/macros/s/AKfycbyynxAFjw8ijV5L0TpRvEYePYer2Gxg8MpscvamiotIj9fD1M9GijIVKmeF6cXfoyLc/exec";
+
       const steps = [
         {
           key: "nombre",
@@ -1694,12 +1698,68 @@
           addMsg(botText, "bot");
           renderInput(next);
         } else {
-          await showTyping();
-          addMsg(
-            "¡Perfecto! 🎉 Un asesor te contactará pronto con tu cotización personalizada.",
-            "bot",
-          );
+          await showSummary();
         }
+      }
+
+      async function showSummary() {
+        addMsg(
+          "¡Perfecto! 🎉 Hemos recibido toda tu información. Un asesor te contactará muy pronto con una cotización personalizada.",
+          "bot",
+        );
+
+        const labels = {
+          nombre: "Nombre",
+          telefono: "Teléfono",
+          email: "Email",
+          recibo: "Recibo de luz",
+          monto_rec: "Monto Ult. Factura",
+          residencia: "Tipo de residencia",
+          plano: "Plano de la casa",
+          interes: "Interés en ahorrar",
+        };
+
+        const card = document.createElement("div");
+        card.className = "summary-card";
+        Object.entries(labels).forEach(([k, label]) => {
+          const row = document.createElement("div");
+          row.className = "srow";
+          row.innerHTML = `<span class="slabel">${label}</span><span class="sval">${data[k] || "—"}</span>`;
+          card.appendChild(row);
+        });
+        inputEl.innerHTML = "";
+        inputEl.appendChild(card);
+
+        const statusEl = document.createElement("p");
+        statusEl.id = "status-msg";
+        statusEl.className = "status-loading";
+        statusEl.textContent = "Guardando tu información...";
+        inputEl.appendChild(statusEl);
+
+        // console.log(data, statusEl);
+        enviarDatosASheets(data, statusEl);
+      }
+
+      function enviarDatosASheets(data) {
+        const scriptURL = URL_DE_APPS_SCRIPT_AQUI;
+
+        // Usamos fetch para enviar los datos
+        fetch(scriptURL, {
+          method: "POST",
+          mode: "no-cors", // <--- CRÍTICO: Esto evita el error de seguridad (CORS)
+          cache: "no-cache",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => {
+            console.log("Datos enviados correctamente");
+            // Aquí puedes mostrar el mensaje de éxito en tu chatbot
+          })
+          .catch((error) => {
+            console.error("Error al enviar los datos:", error);
+          });
       }
 
       async function initChat() {

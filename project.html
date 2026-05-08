@@ -445,20 +445,6 @@
       ><i class="bi bi-arrow-up"></i
     ></a>
 
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/wow/wow.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/counterup/counterup.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="lib/isotope/isotope.pkgd.min.js"></script>
-    <script src="lib/lightbox/js/lightbox.min.js"></script>
-
-    <!-- Template Javascript -->
-    <script src="js/main.js"></script>
-
     <!-- ==================== CHATBOT COMPLETO ==================== -->
     <div
       class="chat-launcher"
@@ -487,7 +473,7 @@
         style="
           display: none;
           position: fixed;
-          bottom: 120px;
+          bottom: 50px;
           right: 25px;
           width: 380px;
           height: 620px;
@@ -574,10 +560,25 @@
         ></div>
       </div>
     </div>
+    <!-- ChatBot End -->
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/counterup/counterup.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/isotope/isotope.pkgd.min.js"></script>
+    <script src="lib/lightbox/js/lightbox.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
 
     <script>
-      // ==================== CHATBOT INTELIGENTE ====================
-      const SCRIPT_URL =
+      // ==================== CHATBOT CON VALIDACIONES FUERTES ====================
+      const URL_DE_APPS_SCRIPT_AQUI =
         "https://script.google.com/macros/s/AKfycbyynxAFjw8ijV5L0TpRvEYePYer2Gxg8MpscvamiotIj9fD1M9GijIVKmeF6cXfoyLc/exec";
 
       const steps = [
@@ -585,26 +586,41 @@
           key: "nombre",
           bot: "¡Hola! 👋 Soy tu asesor solar. ¿Cuál es tu nombre?",
           type: "text",
-          placeholder: "Escribe tu nombre...",
+          placeholder: "Escribe tu nombre completo...",
         },
         {
           key: "telefono",
           bot: (d) =>
             `Mucho gusto, ${d.nombre}! 😊 ¿Cuál es tu número de teléfono?`,
           type: "text",
-          placeholder: "Ej: 6749-9134",
+          placeholder: "Ej: 67499134",
+          validate: (v) => {
+            const clean = v.trim().replace(/\D/g, "");
+            if (clean.length === 8) return null;
+            return "❌ Ingresa un número de 8 dígitos (ej: 67499134)";
+          },
         },
         {
           key: "email",
           bot: "¿Cuál es tu correo electrónico?",
           type: "text",
-          placeholder: "tu@email.com",
+          placeholder: "ejemplo@gmail.com",
+          validate: (v) => {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (regex.test(v.trim())) return null;
+            return "❌ Ingresa un correo electrónico válido";
+          },
         },
         {
           key: "monto_rec",
           bot: "¿Cuánto pagas aproximadamente de luz al mes?",
           type: "text",
           placeholder: "Ej: 85.00",
+          validate: (v) => {
+            const num = v.trim().replace(/[^0-9.]/g, "");
+            if (num && !isNaN(parseFloat(num))) return null;
+            return "❌ Ingresa solo números (ej: 85.00)";
+          },
         },
         {
           key: "residencia",
@@ -617,13 +633,19 @@
           ],
         },
         {
+          key: "plano",
+          bot: "¿Cuentas con el plano de tu casa?",
+          type: "options",
+          options: ["✅ Sí, tengo el plano", "❌ No tengo plano"],
+        },
+        {
           key: "interes",
           bot: "¡Genial! ¿Qué tan interesado estás?",
           type: "options",
           options: [
             "🔥 Quiero máximo ahorro",
-            "🤔 Quiero precios",
-            "👀 Solo explorando",
+            "🤔 Quiero información y precios",
+            "👀 Solo estoy explorando",
           ],
         },
       ];
@@ -640,7 +662,7 @@
       const chatPopup = document.getElementById("chat-popup");
 
       function scrollToBottom() {
-        msgsEl.scrollTop = msgsEl.scrollHeight;
+        setTimeout(() => (msgsEl.scrollTop = msgsEl.scrollHeight), 100);
       }
 
       function addMsg(text, type) {
@@ -673,26 +695,66 @@
 
       function renderInput(s) {
         inputEl.innerHTML = "";
+
         if (s.type === "text") {
+          const row = document.createElement("div");
+          row.className = "text-row";
+
           const inp = document.createElement("input");
           inp.type = "text";
           inp.placeholder = s.placeholder;
           inp.className = "form-control mb-2";
 
+          const errorMsg = document.createElement("div");
+          errorMsg.className = "text-danger small mt-1";
+          errorMsg.style.display = "none";
+
           const btn = document.createElement("button");
           btn.className = "btn btn-success w-100";
           btn.textContent = "Enviar";
-          btn.onclick = () => {
-            if (inp.value.trim()) handleAnswer(inp.value.trim());
+
+          const submit = () => {
+            const val = inp.value.trim();
+            if (!val) return;
+
+            if (s.validate) {
+              const error = s.validate(val);
+              if (error) {
+                errorMsg.textContent = error;
+                errorMsg.style.display = "block";
+                inp.style.borderColor = "#dc3545";
+
+                // ← SELECCIONA TODO EL TEXTO AUTOMÁTICAMENTE
+                inp.focus();
+                inp.select();
+
+                return;
+              }
+            }
+
+            // Si todo está correcto
+            errorMsg.style.display = "none";
+            inp.style.borderColor = "";
+            handleAnswer(val);
           };
 
+          btn.onclick = submit;
           inp.onkeydown = (e) => {
-            if (e.key === "Enter") btn.click();
+            if (e.key === "Enter") submit();
           };
 
-          inputEl.appendChild(inp);
-          inputEl.appendChild(btn);
-          setTimeout(() => inp.focus(), 100);
+          // Limpiar error cuando el usuario empiece a escribir
+          inp.oninput = () => {
+            errorMsg.style.display = "none";
+            inp.style.borderColor = "";
+          };
+
+          row.appendChild(inp);
+          row.appendChild(errorMsg);
+          row.appendChild(btn);
+          inputEl.appendChild(row);
+
+          setTimeout(() => inp.focus(), 150);
         } else if (s.type === "options") {
           const wrap = document.createElement("div");
           s.options.forEach((opt) => {
@@ -704,6 +766,7 @@
           });
           inputEl.appendChild(wrap);
         }
+        scrollToBottom();
       }
 
       async function handleAnswer(answer) {
@@ -722,12 +785,68 @@
           addMsg(botText, "bot");
           renderInput(next);
         } else {
-          await showTyping();
-          addMsg(
-            "¡Perfecto! 🎉 Un asesor te contactará pronto con tu cotización.",
-            "bot",
-          );
+          await showSummary();
         }
+      }
+
+      async function showSummary() {
+        addMsg(
+          "¡Perfecto! 🎉 Hemos recibido toda tu información. Un asesor te contactará muy pronto con una cotización personalizada.",
+          "bot",
+        );
+
+        const labels = {
+          nombre: "Nombre",
+          telefono: "Teléfono",
+          email: "Email",
+          recibo: "Recibo de luz",
+          monto_rec: "Monto Ult. Factura",
+          residencia: "Tipo de residencia",
+          plano: "Plano de la casa",
+          interes: "Interés en ahorrar",
+        };
+
+        const card = document.createElement("div");
+        card.className = "summary-card";
+        Object.entries(labels).forEach(([k, label]) => {
+          const row = document.createElement("div");
+          row.className = "srow";
+          row.innerHTML = `<span class="slabel">${label}</span><span class="sval">${data[k] || "—"}</span>`;
+          card.appendChild(row);
+        });
+        inputEl.innerHTML = "";
+        inputEl.appendChild(card);
+
+        const statusEl = document.createElement("p");
+        statusEl.id = "status-msg";
+        statusEl.className = "status-loading";
+        statusEl.textContent = "Guardando tu información...";
+        inputEl.appendChild(statusEl);
+
+        // console.log(data, statusEl);
+        enviarDatosASheets(data, statusEl);
+      }
+
+      function enviarDatosASheets(data) {
+        const scriptURL = URL_DE_APPS_SCRIPT_AQUI;
+
+        // Usamos fetch para enviar los datos
+        fetch(scriptURL, {
+          method: "POST",
+          mode: "no-cors", // <--- CRÍTICO: Esto evita el error de seguridad (CORS)
+          cache: "no-cache",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => {
+            console.log("Datos enviados correctamente");
+            // Aquí puedes mostrar el mensaje de éxito en tu chatbot
+          })
+          .catch((error) => {
+            console.error("Error al enviar los datos:", error);
+          });
       }
 
       async function initChat() {
@@ -740,15 +859,17 @@
         renderInput(steps[0]);
       }
 
+      // Eventos
       toggleChat.addEventListener("click", () => {
         chatPopup.style.display =
           chatPopup.style.display === "flex" ? "none" : "flex";
         if (chatPopup.style.display === "flex" && step === 0) initChat();
       });
 
-      closeChat.addEventListener("click", () => {
-        chatPopup.style.display = "none";
-      });
+      closeChat.addEventListener(
+        "click",
+        () => (chatPopup.style.display = "none"),
+      );
     </script>
 
     <script>

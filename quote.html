@@ -447,24 +447,24 @@
       ><i class="bi bi-arrow-up"></i
     ></a>
 
-    <!-- CHATBOT CORREGIDO -->
+    <!-- ==================== CHATBOT COMPLETO ==================== -->
     <div
       class="chat-launcher"
       id="chatLauncher"
-      style="position: fixed; bottom: 30px; right: 30px; z-index: 99999"
+      style="position: fixed; bottom: 30px; right: 25px; z-index: 99999"
     >
       <button
         class="launcher-btn"
         id="toggleChat"
         style="
-          width: 75px;
-          height: 75px;
+          width: 70px;
+          height: 70px;
           border-radius: 50%;
           background: #25d366;
           color: white;
           border: none;
-          font-size: 34px;
-          box-shadow: 0 8px 30px rgba(37, 211, 102, 0.6);
+          font-size: 32px;
+          box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
         "
       >
         💬
@@ -476,14 +476,15 @@
           display: none;
           position: fixed;
           bottom: 50px;
-          right: 30px;
+          right: 25px;
           width: 380px;
-          height: 650px;
+          height: 620px;
           background: white;
           border-radius: 20px;
           box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
           overflow: hidden;
           z-index: 100000;
+          flex-direction: column;
         "
       >
         <!-- Header -->
@@ -536,9 +537,10 @@
           style="flex: 1; padding: 15px; overflow-y: auto; background: #f8f9fa"
         ></div>
 
+        <!-- Progress -->
         <div
           style="
-            padding: 10px 15px;
+            padding: 8px 15px;
             background: #f1f1f1;
             border-top: 1px solid #ddd;
           "
@@ -553,12 +555,14 @@
           <small id="step-hint" class="text-muted">Paso 1 de 6</small>
         </div>
 
+        <!-- Input Area -->
         <div
           id="input-area"
           style="padding: 12px; background: white; border-top: 1px solid #ddd"
         ></div>
       </div>
     </div>
+    <!-- ChatBot End -->
 
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -575,32 +579,50 @@
     <script src="js/main.js"></script>
 
     <script>
-      // ==================== CHATBOT INTELIGENTE ====================
+      // ==================== CHATBOT CON VALIDACIONES FUERTES ====================
+      const URL_DE_APPS_SCRIPT_AQUI =
+        "https://script.google.com/macros/s/AKfycbyynxAFjw8ijV5L0TpRvEYePYer2Gxg8MpscvamiotIj9fD1M9GijIVKmeF6cXfoyLc/exec";
+
       const steps = [
         {
           key: "nombre",
           bot: "¡Hola! 👋 Soy tu asesor solar. ¿Cuál es tu nombre?",
           type: "text",
-          placeholder: "Escribe tu nombre...",
+          placeholder: "Escribe tu nombre completo...",
         },
         {
           key: "telefono",
           bot: (d) =>
             `Mucho gusto, ${d.nombre}! 😊 ¿Cuál es tu número de teléfono?`,
           type: "text",
-          placeholder: "Ej: 6749-9134",
+          placeholder: "Ej: 67499134",
+          validate: (v) => {
+            const clean = v.trim().replace(/\D/g, "");
+            if (clean.length === 8) return null;
+            return "❌ Ingresa un número de 8 dígitos (ej: 67499134)";
+          },
         },
         {
           key: "email",
           bot: "¿Cuál es tu correo electrónico?",
           type: "text",
-          placeholder: "tu@email.com",
+          placeholder: "ejemplo@gmail.com",
+          validate: (v) => {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (regex.test(v.trim())) return null;
+            return "❌ Ingresa un correo electrónico válido";
+          },
         },
         {
           key: "monto_rec",
           bot: "¿Cuánto pagas aproximadamente de luz al mes?",
           type: "text",
           placeholder: "Ej: 85.00",
+          validate: (v) => {
+            const num = v.trim().replace(/[^0-9.]/g, "");
+            if (num && !isNaN(parseFloat(num))) return null;
+            return "❌ Ingresa solo números (ej: 85.00)";
+          },
         },
         {
           key: "residencia",
@@ -613,11 +635,17 @@
           ],
         },
         {
+          key: "plano",
+          bot: "¿Cuentas con el plano de tu casa?",
+          type: "options",
+          options: ["✅ Sí, tengo el plano", "❌ No tengo plano"],
+        },
+        {
           key: "interes",
-          bot: "¡Genial! ¿Qué tan interesado estás en instalar paneles solares?",
+          bot: "¡Genial! ¿Qué tan interesado estás?",
           type: "options",
           options: [
-            "🔥 Quiero el máximo ahorro",
+            "🔥 Quiero máximo ahorro",
             "🤔 Quiero información y precios",
             "👀 Solo estoy explorando",
           ],
@@ -635,31 +663,25 @@
       const closeChat = document.getElementById("closeChat");
       const chatPopup = document.getElementById("chat-popup");
 
-      toggleChat.addEventListener("click", () => {
-        chatPopup.style.display =
-          chatPopup.style.display === "flex" ? "none" : "flex";
-        if (chatPopup.style.display === "flex" && step === 0) initChat();
-      });
-
-      closeChat.addEventListener("click", () => {
-        chatPopup.style.display = "none";
-      });
+      function scrollToBottom() {
+        setTimeout(() => (msgsEl.scrollTop = msgsEl.scrollHeight), 100);
+      }
 
       function addMsg(text, type) {
         const div = document.createElement("div");
         div.className = `msg ${type}`;
         div.textContent = text;
         msgsEl.appendChild(div);
-        msgsEl.scrollTop = msgsEl.scrollHeight;
+        scrollToBottom();
       }
 
       function showTyping() {
         return new Promise((resolve) => {
           const typing = document.createElement("div");
           typing.className = "msg bot";
-          typing.innerHTML = "escribiendo...";
+          typing.textContent = "escribiendo...";
           msgsEl.appendChild(typing);
-          msgsEl.scrollTop = msgsEl.scrollHeight;
+          scrollToBottom();
           setTimeout(() => {
             typing.remove();
             resolve();
@@ -673,39 +695,80 @@
         stepHint.textContent = `Paso ${step + 1} de ${steps.length}`;
       }
 
-      function renderInput(currentStep) {
+      function renderInput(s) {
         inputEl.innerHTML = "";
-        if (currentStep.type === "text") {
-          const input = document.createElement("input");
-          input.type = "text";
-          input.placeholder = currentStep.placeholder;
-          input.className = "form-control mb-2";
+
+        if (s.type === "text") {
+          const row = document.createElement("div");
+          row.className = "text-row";
+
+          const inp = document.createElement("input");
+          inp.type = "text";
+          inp.placeholder = s.placeholder;
+          inp.className = "form-control mb-2";
+
+          const errorMsg = document.createElement("div");
+          errorMsg.className = "text-danger small mt-1";
+          errorMsg.style.display = "none";
 
           const btn = document.createElement("button");
           btn.className = "btn btn-success w-100";
           btn.textContent = "Enviar";
-          btn.onclick = () => {
-            if (input.value.trim()) handleAnswer(input.value.trim());
+
+          const submit = () => {
+            const val = inp.value.trim();
+            if (!val) return;
+
+            if (s.validate) {
+              const error = s.validate(val);
+              if (error) {
+                errorMsg.textContent = error;
+                errorMsg.style.display = "block";
+                inp.style.borderColor = "#dc3545";
+
+                // ← SELECCIONA TODO EL TEXTO AUTOMÁTICAMENTE
+                inp.focus();
+                inp.select();
+
+                return;
+              }
+            }
+
+            // Si todo está correcto
+            errorMsg.style.display = "none";
+            inp.style.borderColor = "";
+            handleAnswer(val);
           };
 
-          input.onkeypress = (e) => {
-            if (e.key === "Enter") btn.click();
+          btn.onclick = submit;
+          inp.onkeydown = (e) => {
+            if (e.key === "Enter") submit();
           };
 
-          inputEl.appendChild(input);
-          inputEl.appendChild(btn);
-          setTimeout(() => input.focus(), 300);
-        } else if (currentStep.type === "options") {
+          // Limpiar error cuando el usuario empiece a escribir
+          inp.oninput = () => {
+            errorMsg.style.display = "none";
+            inp.style.borderColor = "";
+          };
+
+          row.appendChild(inp);
+          row.appendChild(errorMsg);
+          row.appendChild(btn);
+          inputEl.appendChild(row);
+
+          setTimeout(() => inp.focus(), 150);
+        } else if (s.type === "options") {
           const wrap = document.createElement("div");
-          currentStep.options.forEach((opt) => {
-            const btn = document.createElement("button");
-            btn.className = "btn btn-outline-success w-100 mb-2";
-            btn.textContent = opt;
-            btn.onclick = () => handleAnswer(opt);
-            wrap.appendChild(btn);
+          s.options.forEach((opt) => {
+            const b = document.createElement("button");
+            b.className = "btn btn-outline-success w-100 mb-2";
+            b.textContent = opt;
+            b.onclick = () => handleAnswer(opt);
+            wrap.appendChild(b);
           });
           inputEl.appendChild(wrap);
         }
+        scrollToBottom();
       }
 
       async function handleAnswer(answer) {
@@ -724,12 +787,68 @@
           addMsg(botText, "bot");
           renderInput(next);
         } else {
-          await showTyping();
-          addMsg(
-            "¡Perfecto! 🎉 Un asesor te contactará pronto con tu cotización personalizada.",
-            "bot",
-          );
+          await showSummary();
         }
+      }
+
+      async function showSummary() {
+        addMsg(
+          "¡Perfecto! 🎉 Hemos recibido toda tu información. Un asesor te contactará muy pronto con una cotización personalizada.",
+          "bot",
+        );
+
+        const labels = {
+          nombre: "Nombre",
+          telefono: "Teléfono",
+          email: "Email",
+          recibo: "Recibo de luz",
+          monto_rec: "Monto Ult. Factura",
+          residencia: "Tipo de residencia",
+          plano: "Plano de la casa",
+          interes: "Interés en ahorrar",
+        };
+
+        const card = document.createElement("div");
+        card.className = "summary-card";
+        Object.entries(labels).forEach(([k, label]) => {
+          const row = document.createElement("div");
+          row.className = "srow";
+          row.innerHTML = `<span class="slabel">${label}</span><span class="sval">${data[k] || "—"}</span>`;
+          card.appendChild(row);
+        });
+        inputEl.innerHTML = "";
+        inputEl.appendChild(card);
+
+        const statusEl = document.createElement("p");
+        statusEl.id = "status-msg";
+        statusEl.className = "status-loading";
+        statusEl.textContent = "Guardando tu información...";
+        inputEl.appendChild(statusEl);
+
+        // console.log(data, statusEl);
+        enviarDatosASheets(data, statusEl);
+      }
+
+      function enviarDatosASheets(data) {
+        const scriptURL = URL_DE_APPS_SCRIPT_AQUI;
+
+        // Usamos fetch para enviar los datos
+        fetch(scriptURL, {
+          method: "POST",
+          mode: "no-cors", // <--- CRÍTICO: Esto evita el error de seguridad (CORS)
+          cache: "no-cache",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => {
+            console.log("Datos enviados correctamente");
+            // Aquí puedes mostrar el mensaje de éxito en tu chatbot
+          })
+          .catch((error) => {
+            console.error("Error al enviar los datos:", error);
+          });
       }
 
       async function initChat() {
@@ -741,6 +860,18 @@
         addMsg(steps[0].bot, "bot");
         renderInput(steps[0]);
       }
+
+      // Eventos
+      toggleChat.addEventListener("click", () => {
+        chatPopup.style.display =
+          chatPopup.style.display === "flex" ? "none" : "flex";
+        if (chatPopup.style.display === "flex" && step === 0) initChat();
+      });
+
+      closeChat.addEventListener(
+        "click",
+        () => (chatPopup.style.display = "none"),
+      );
     </script>
 
     <script>
