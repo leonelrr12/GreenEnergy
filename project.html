@@ -181,48 +181,40 @@
     </div>
     <!-- Spinner End -->
 
-    <!-- Topbar Start -->
-    <div class="container-fluid bg-dark p-0">
-      <div class="row gx-0 d-none d-lg-flex">
-        <div class="col-lg-7 px-5 text-start">
-          <div class="h-100 d-inline-flex align-items-center me-4">
-            <small class="fa-solid fa-location-dot text-primary me-2"></small>
-            <small>123 Street, New York, USA</small>
+    <!-- Top Bar Dinámico -->
+    <div class="container-fluid bg-dark py-2">
+      <div class="container">
+        <div class="row align-items-center">
+          <!-- Horario Dinámico -->
+          <div class="col-lg-8 col-md-7">
+            <div class="d-inline-flex align-items-center">
+              <i class="fa-solid fa-clock text-primary me-2"></i>
+              <small id="horario-dinamico"></small>
+            </div>
           </div>
-          <div class="h-100 d-inline-flex align-items-center">
-            <small class="far fa-clock text-primary me-2"></small>
-            <small>Mon - Fri : 09.00 AM - 09.00 PM</small>
-          </div>
-        </div>
-        <div class="col-lg-5 px-5 text-end">
-          <div class="h-100 d-inline-flex align-items-center me-4">
-            <small class="fa-solid fa-phone text-primary me-2"></small>
-            <small>+012 345 6789</small>
-          </div>
-          <div class="h-100 d-inline-flex align-items-center mx-n2">
-            <a
-              class="btn btn-square btn-link rounded-0 border-0 border-end border-secondary"
-              href=""
-              ><i class="fab fa-facebook-f"></i
-            ></a>
-            <a
-              class="btn btn-square btn-link rounded-0 border-0 border-end border-secondary"
-              href=""
-              ><i class="fab fa-twitter"></i
-            ></a>
-            <a
-              class="btn btn-square btn-link rounded-0 border-0 border-end border-secondary"
-              href=""
-              ><i class="fab fa-linkedin-in"></i
-            ></a>
-            <a class="btn btn-square btn-link rounded-0" href=""
-              ><i class="fab fa-instagram"></i
-            ></a>
+
+          <!-- Teléfono y WhatsApp -->
+          <div class="col-lg-4 col-md-5 text-lg-end">
+            <div class="d-inline-flex align-items-center gap-3">
+              <a
+                href="tel:+50767499134"
+                class="text-light text-decoration-none"
+              >
+                <i class="fa-solid fa-phone me-1"></i> +507 6749-9134
+              </a>
+              <a
+                href="https://wa.me/50767499134"
+                target="_blank"
+                class="text-primary"
+              >
+                <i class="fa-brands fa-whatsapp"></i> WhatsApp
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- Topbar End -->
+    <!-- Top Bar Dinámico End -->
 
     <!-- Navbar Start -->
     <nav
@@ -747,6 +739,39 @@
         addMsg(steps[0].bot, "bot");
         renderInput(steps[0]);
       }
+    </script>
+
+    <script>
+      // Horario Dinámico
+      function actualizarHorario() {
+        const ahora = new Date();
+        const dia = ahora.getDay(); // 0 = Domingo, 1 = Lunes...
+        const hora = ahora.getHours();
+
+        let texto = "";
+
+        if (dia === 0) {
+          // Domingo
+          texto = "Domingo: Cerrado";
+        } else if (dia === 6) {
+          // Sábado
+          texto = "Sábado: 8:00 AM - 2:00 PM";
+        } else {
+          // Lunes a Viernes
+          if (hora >= 8 && hora < 18) {
+            texto = "Hoy: Abierto hasta las 6:00 PM";
+          } else if (hora < 8) {
+            texto = "Lunes - Viernes: 8:00 AM - 6:00 PM";
+          } else {
+            texto = "Lunes - Viernes: 8:00 AM - 6:00 PM";
+          }
+        }
+
+        document.getElementById("horario-dinamico").innerHTML = texto;
+      }
+
+      // Ejecutar al cargar la página
+      document.addEventListener("DOMContentLoaded", actualizarHorario);
     </script>
   </body>
 </html>
