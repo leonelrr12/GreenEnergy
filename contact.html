@@ -70,6 +70,47 @@
       .bg-light .btn-success {
         box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
       }
+
+      .boton-premium {
+        background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+        color: white;
+        padding: 14px 28px;
+        border: none;
+        border-radius: 50px; /* Bordes redondeados modernos */
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease; /* Transición suave */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%; /* Ocupa todo el ancho en móviles */
+        max-width: 250px;
+        margin: 20px 0;
+        outline: none;
+      }
+
+      /* Efecto cuando pasas el ratón (Hover) */
+      .boton-premium:hover {
+        background: linear-gradient(135deg, #45a049 0%, #1b5e20 100%);
+        transform: translateY(-2px); /* Se eleva un poquito */
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Efecto cuando haces clic */
+      .boton-premium:active {
+        transform: translateY(0);
+      }
+
+      /* Estilo cuando el botón está desactivado (mientras envía) */
+      .boton-premium:disabled {
+        background: #ccc !important;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
     </style>
 
     <!-- Chatbot -->
@@ -339,7 +380,7 @@
                   </div>
                   <div class="col-md-6">
                     <input
-                      type="tel"
+                      type="text"
                       class="form-control"
                       id="telefono"
                       placeholder="Teléfono *"
@@ -357,15 +398,21 @@
                   <div class="col-12">
                     <textarea
                       class="form-control"
-                      id="mensaje"
+                      id="interes"
                       rows="6"
                       placeholder="Cuéntanos sobre tu proyecto (consumo mensual, tipo de propiedad, etc.) *"
                       required
                     ></textarea>
                   </div>
                   <div class="col-12">
-                    <button type="submit" class="btn btn-success w-100 py-3">
-                      Enviar Mensaje
+                    <button
+                      type="button"
+                      id="btnEnviar"
+                      class="boton-premium"
+                      onclick="enviarFormularioDeContacto()"
+                    >
+                      <span>Enviar Mensaje</span>
+                      <div class="icono-envio"></div>
                     </button>
                   </div>
                 </div>
@@ -624,7 +671,7 @@
     <script>
       // ==================== CHATBOT CON VALIDACIONES FUERTES ====================
       const URL_DE_APPS_SCRIPT_AQUI =
-        "https://script.google.com/macros/s/AKfycbyynxAFjw8ijV5L0TpRvEYePYer2Gxg8MpscvamiotIj9fD1M9GijIVKmeF6cXfoyLc/exec";
+        "https://script.google.com/macros/s/AKfycbyEBQkmuxClr75vWAJW1lJUqBnYKroQpwUxR8zmy6RjKxE9O2s7Yp8Y2cDoFbUjJXkO/exec";
 
       const steps = [
         {
@@ -869,10 +916,10 @@
         inputEl.appendChild(statusEl);
 
         // console.log(data, statusEl);
-        enviarDatosASheets(data, statusEl);
+        enviarDatosAlScript(data, statusEl);
       }
 
-      function enviarDatosASheets(data) {
+      function enviarDatosAlScript(data) {
         const scriptURL = URL_DE_APPS_SCRIPT_AQUI;
 
         // Usamos fetch para enviar los datos
@@ -948,6 +995,86 @@
 
       // Ejecutar al cargar la página
       document.addEventListener("DOMContentLoaded", actualizarHorario);
+    </script>
+
+    <script>
+      // --- FUNCIONES DE VALIDACIÓN ---
+      function validarEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      }
+
+      function validarTelefono(telefono) {
+        const num = telefono.replace(/\D/g, ""); // Deja solo números
+        return num.length === 8; // Validación para Panamá (8 dígitos)
+      }
+
+      // --- FUNCIÓN PRINCIPAL DE ENVÍO ---
+      function enviarFormularioDeContacto() {
+        // 1. Capturar los valores de los inputs
+        const nombre = document.getElementById("nombre").value.trim();
+        const telefono = document.getElementById("telefono").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const detalle = document.getElementById("interes").value.trim();
+        const boton = document.getElementById("btnEnviar"); // ID de tu botón
+
+        // 2. Validaciones de seguridad
+        if (nombre === "") {
+          alert("Por favor, ingresa tu nombre.");
+          return;
+        }
+
+        if (!validarTelefono(telefono)) {
+          alert("Por favor, ingresa un número de teléfono de 8 dígitos.");
+          return;
+        }
+
+        if (!validarEmail(email)) {
+          alert("El correo electrónico no es válido.");
+          return;
+        }
+
+        // 3. Preparar los datos
+        const datosForm = {
+          origen: "formulario", // <--- CRÍTICO para que Apps Script sepa a qué hoja ir
+          nombre: nombre,
+          telefono: telefono.replace(/\D/g, ""), // Guardamos solo números
+          email: email,
+          interes: detalle,
+        };
+
+        // 4. Cambiar estado del botón para evitar múltiples clics
+        boton.disabled = true;
+        boton.innerHTML = "<span>Enviando...</span>"; // Cambiamos el texto
+
+        console.log("Enviando datos al script:", datosForm);
+
+        try {
+          const scriptURL = URL_DE_APPS_SCRIPT_AQUI; // Reemplaza con tu URL /exec
+
+          fetch(scriptURL, {
+            method: "POST",
+            mode: "no-cors", // <--- CRÍTICO: Esto evita el error de seguridad (CORS)
+            cache: "no-cache",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(datosForm),
+          })
+            .then((response) => {
+              console.log("Datos enviados correctamente");
+              // Aquí puedes mostrar el mensaje de éxito en tu chatbot
+            })
+            .catch((error) => {
+              console.error("Error al enviar los datos:", error);
+            });
+        } catch (error) {
+          console.error("Error:", error);
+          alert("Hubo un error al enviar. Por favor, intenta de nuevo.");
+        } finally {
+          boton.disabled = false;
+          boton.innerHTML = "<span>Enviar Mensaje</span>";
+        }
+      }
     </script>
   </body>
 </html>
