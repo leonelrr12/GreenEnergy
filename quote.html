@@ -181,10 +181,11 @@
           <div class="col-lg-8">
             <div class="bg-light p-5 rounded">
               <h2 class="text-center mb-5">Solicita tu Cotización Gratis</h2>
-              <form id="quoteForm">
+              <form id="quoteForm" onsubmit="return enviarCotizacion(event)">
                 <div class="row g-4">
                   <div class="col-md-6">
                     <input
+                      id="q-name"
                       type="text"
                       class="form-control"
                       placeholder="Nombre completo *"
@@ -193,6 +194,7 @@
                   </div>
                   <div class="col-md-6">
                     <input
+                      id="q-phone"
                       type="tel"
                       class="form-control"
                       placeholder="Teléfono / WhatsApp *"
@@ -201,6 +203,7 @@
                   </div>
                   <div class="col-md-6">
                     <input
+                      id="q-email"
                       type="email"
                       class="form-control"
                       placeholder="Correo electrónico"
@@ -208,6 +211,7 @@
                   </div>
                   <div class="col-md-6">
                     <input
+                      id="q-budget"
                       type="text"
                       class="form-control"
                       placeholder="Consumo mensual aproximado (en dólares)"
@@ -215,18 +219,24 @@
                   </div>
                   <div class="col-12">
                     <textarea
+                      id="q-notes"
                       class="form-control"
                       rows="5"
                       placeholder="Cuéntanos más sobre tu proyecto..."
                     ></textarea>
                   </div>
                   <div class="col-12 text-center">
-                    <button type="submit" class="btn btn-success btn-lg px-5">
+                    <button id="q-submit" type="submit" class="btn btn-success btn-lg px-5">
                       Enviar Solicitud de Cotización
                     </button>
                   </div>
                 </div>
               </form>
+              <div id="q-success" style="display:none" class="text-center mt-4 p-4 bg-white rounded shadow-sm">
+                <div class="text-success" style="font-size:48px">✅</div>
+                <h4 class="mt-2">¡Cotización solicitada!</h4>
+                <p class="text-muted">Un asesor te contactará en las próximas horas con tu cotización personalizada.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -732,25 +742,22 @@
       }
 
       function enviarDatosAlScript(data) {
-        const scriptURL = URL_DE_APPS_SCRIPT_AQUI;
-
-        // Usamos fetch para enviar los datos
-        fetch(scriptURL, {
+        const payload = {
+          name: data.nombre || '',
+          phone: data.telefono || '',
+          contactPhone: data.telefono || '',
+          email: data.email || '',
+          budget: data.monto_rec || '',
+          notes: (data.residencia || '') + ' | ' + (data.plano || '') + ' | ' + (data.interes || ''),
+          source: 'web',
+        };
+        fetch('/api/public/lead', {
           method: "POST",
-          mode: "no-cors", // <--- CRÍTICO: Esto evita el error de seguridad (CORS)
-          cache: "no-cache",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
         })
-          .then((response) => {
-            console.log("Datos enviados correctamente");
-            // Aquí puedes mostrar el mensaje de éxito en tu chatbot
-          })
-          .catch((error) => {
-            console.error("Error al enviar los datos:", error);
-          });
+          .then((r) => console.log("Lead enviado al CRM"))
+          .catch((e) => console.error("Error:", e));
       }
 
       async function initChat() {
@@ -777,22 +784,55 @@
     </script>
 
     <script>
+      // --- FUNCIÓN DE ENVÍO DEL FORMULARIO DE COTIZACIÓN ---
+      async function enviarCotizacion(e) {
+        e.preventDefault();
+        const btn = document.getElementById('q-submit');
+        btn.disabled = true;
+        btn.textContent = 'Enviando...';
+        try {
+          const res = await fetch('/api/public/lead', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: document.getElementById('q-name').value,
+              phone: document.getElementById('q-phone').value,
+              contactPhone: document.getElementById('q-phone').value,
+              email: document.getElementById('q-email').value || undefined,
+              budget: document.getElementById('q-budget').value || undefined,
+              notes: document.getElementById('q-notes').value || undefined,
+              source: 'web-quote',
+            }),
+          });
+          if (res.ok) {
+            document.getElementById('quoteForm').style.display = 'none';
+            document.getElementById('q-success').style.display = 'block';
+          } else {
+            const data = await res.json();
+            alert(data.error || 'Error al enviar. Intenta de nuevo.');
+          }
+        } catch {
+          alert('Error de conexión. Intenta de nuevo.');
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Enviar Solicitud de Cotización';
+        }
+        return false;
+      }
+    </script>
+
+    <script>
       // Horario Dinámico
       function actualizarHorario() {
         const ahora = new Date();
-        const dia = ahora.getDay(); // 0 = Domingo, 1 = Lunes...
+        const dia = ahora.getDay();
         const hora = ahora.getHours();
-
         let texto = "";
-
         if (dia === 0) {
-          // Domingo
           texto = "Domingo: Cerrado";
         } else if (dia === 6) {
-          // Sábado
           texto = "Sábado: 8:00 AM - 2:00 PM";
         } else {
-          // Lunes a Viernes
           if (hora >= 8 && hora < 18) {
             texto = "Hoy: Abierto hasta las 6:00 PM";
           } else if (hora < 8) {
@@ -801,11 +841,8 @@
             texto = "Lunes - Viernes: 8:00 AM - 6:00 PM";
           }
         }
-
         document.getElementById("horario-dinamico").innerHTML = texto;
       }
-
-      // Ejecutar al cargar la página
       document.addEventListener("DOMContentLoaded", actualizarHorario);
     </script>
   </body>
