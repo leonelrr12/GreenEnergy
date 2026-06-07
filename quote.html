@@ -32,7 +32,7 @@
     />
 
     <!-- Favicon -->
-    <link href="img/favicon.ico" rel="icon" />
+    <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -54,7 +54,7 @@
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="assets/css/style.css" />
 
-    <link rel="icon" href="img/favicon.ico" type="image/x-icon" />
+    
     <link rel="apple-touch-icon" href="img/logo.webp" />
 
 
@@ -208,6 +208,15 @@
                       class="form-control"
                       placeholder="Correo electrónico"
                     />
+                  </div>
+                  <div class="col-md-6">
+                    <select id="q-service" class="form-control">
+                      <option value="">Servicio de interés</option>
+                      <option value="paneles residenciales">Paneles Residenciales</option>
+                      <option value="paneles comerciales">Paneles Comerciales</option>
+                      <option value="baterías">Baterías de Respaldo</option>
+                      <option value="mantenimiento">Mantenimiento</option>
+                    </select>
                   </div>
                   <div class="col-md-6">
                     <input
@@ -799,6 +808,7 @@
               phone: document.getElementById('q-phone').value,
               contactPhone: document.getElementById('q-phone').value,
               email: document.getElementById('q-email').value || undefined,
+              serviceInterest: document.getElementById('q-service').value || undefined,
               budget: document.getElementById('q-budget').value || undefined,
               notes: document.getElementById('q-notes').value || undefined,
               source: 'web-quote',
