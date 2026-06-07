@@ -10,11 +10,9 @@
         }, 1);
     };
     spinner();
-    
-    
-    // Initiate the wowjs
-    new WOW().init();
 
+    // Initiate WOW.js
+    new WOW().init();
 
     // Sticky Navbar
     $(window).scroll(function () {
@@ -24,8 +22,7 @@
             $('.sticky-top').removeClass('shadow-sm').css('top', '-100px');
         }
     });
-    
-    
+
     // Back to top button
     $(window).scroll(function () {
         if ($(this).scrollTop() > 300) {
@@ -35,17 +32,15 @@
         }
     });
     $('.back-to-top').click(function () {
-        $('html, body').animate({scrollTop: 0}, 1500, 'easeInOutExpo');
+        $('html, body').animate({scrollTop: 0}, 1200, 'easeInOutExpo');
         return false;
     });
-
 
     // Facts counter
     $('[data-toggle="counter-up"]').counterUp({
         delay: 10,
         time: 2000
     });
-
 
     // Header carousel
     $(".header-carousel").owlCarousel({
@@ -58,7 +53,6 @@
         dotsData: true,
     });
 
-
     // Testimonials carousel
     $(".testimonial-carousel").owlCarousel({
         autoplay: true,
@@ -66,21 +60,16 @@
         center: true,
         dots: false,
         loop: true,
-        nav : true,
-        navText : [
+        nav: true,
+        navText: [
             '<i class="bi bi-arrow-left"></i>',
             '<i class="bi bi-arrow-right"></i>'
         ],
         responsive: {
-            0:{
-                items:1
-            },
-            768:{
-                items:2
-            }
+            0:{ items:1 },
+            768:{ items:2 }
         }
     });
-
 
     // Portfolio isotope and filter
     var portfolioIsotope = $('.portfolio-container').isotope({
@@ -90,9 +79,22 @@
     $('#portfolio-flters li').on('click', function () {
         $("#portfolio-flters li").removeClass('active');
         $(this).addClass('active');
-
         portfolioIsotope.isotope({filter: $(this).data('filter')});
     });
-    
-})(jQuery);
 
+    // Navbar shrink on scroll
+    $(window).scroll(function () {
+        if ($(this).scrollTop() > 80) {
+            $('.navbar').addClass('navbar-shrink');
+        } else {
+            $('.navbar').removeClass('navbar-shrink');
+        }
+    });
+
+    // Parallax effect on hero
+    $(window).scroll(function () {
+        var scroll = $(this).scrollTop();
+        $('.hero-section .hero-bg').css('transform', 'translateY(' + scroll * 0.3 + 'px)');
+    });
+
+})(jQuery);

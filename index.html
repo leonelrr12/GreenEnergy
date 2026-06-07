@@ -34,11 +34,11 @@
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon" />
 
-    <!-- Google Web Fonts -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&family=Roboto:wght@500;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Sora:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
 
@@ -47,142 +47,12 @@
     <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet" />
     <link href="lib/lightbox/assets/css/lightbox.min.css" rel="stylesheet" />
 
-    <!-- Font Awesome LOCAL -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="assets/css/all.min.css" />
 
-    <!-- Bootstrap y CSS de la plantilla -->
+    <!-- Bootstrap y CSS personalizado -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="assets/css/style.css" />
-
-    <!-- Chatbot -->
-    <style>
-      /* Chatbot Styles */
-      .chat-launcher {
-        position: fixed;
-        bottom: 100px;
-        right: 25px;
-        z-index: 9999;
-      }
-
-      .launcher-btn {
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        background: #25d366;
-        color: white;
-        border: none;
-        font-size: 32px;
-        box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
-        cursor: pointer;
-        transition: all 0.3s;
-      }
-
-      .launcher-btn:hover {
-        transform: scale(1.1);
-      }
-
-      #chat-popup {
-        position: fixed;
-        bottom: 110px;
-        right: 25px;
-        width: 380px;
-        height: 620px;
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
-        overflow: hidden;
-        display: none;
-        z-index: 10000;
-        flex-direction: column;
-      }
-
-      .chat-header {
-        background: #2e7d32;
-        color: white;
-        padding: 15px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .messages {
-        flex: 1;
-        padding: 15px;
-        overflow-y: auto;
-        background: #f8f9fa;
-      }
-
-      .msg {
-        margin-bottom: 12px;
-        padding: 10px 14px;
-        border-radius: 18px;
-        max-width: 85%;
-      }
-
-      .msg.bot {
-        background: white;
-        align-self: flex-start;
-        border-bottom-left-radius: 4px;
-      }
-
-      .msg.user {
-        background: #dcf8c6;
-        align-self: flex-end;
-        border-bottom-right-radius: 4px;
-      }
-
-      .options-wrap button {
-        display: block;
-        width: 100%;
-        margin: 6px 0;
-        padding: 10px;
-        background: white;
-        border: 1px solid #4caf50;
-        border-radius: 8px;
-        text-align: left;
-      }
-    </style>
-    <!-- Chatbot End-->
-
-    <style>
-      /* === MEJORA DE COLORES Y BOTONES === */
-      :root {
-        --bs-success: #2e7d32;
-      }
-
-      .text-success {
-        color: #2e7d32 !important;
-      }
-      .bg-success {
-        background-color: #2e7d32 !important;
-      }
-      .btn-success {
-        background-color: #2e7d32 !important;
-        border-color: #2e7d32 !important;
-      }
-
-      .btn-success:hover {
-        background-color: #1e5c22;
-        border-color: #1e5c22;
-        color: white;
-        transform: translateY(-2px);
-      }
-
-      .btn-outline-success {
-        color: #2e7d32;
-        border-color: #2e7d32;
-      }
-
-      .btn-outline-success:hover {
-        background-color: #2e7d32;
-        color: white;
-      }
-
-      /* Mejorar contraste en secciones claras */
-      .bg-light .btn-success {
-        box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
-      }
-    </style>
   </head>
 
   <body>
@@ -201,8 +71,8 @@
     </div>
     <!-- Spinner End -->
 
-    <!-- Top Bar Dinámico -->
-    <div class="container-fluid bg-dark py-2">
+    <!-- Top Bar -->
+    <div class="container-fluid top-bar py-2">
       <div class="container">
         <div class="row align-items-center">
           <!-- Horario Dinámico -->
@@ -271,84 +141,63 @@
     <!-- Navbar End -->
 
     <!-- Hero Start -->
-    <div class="container-fluid position-relative p-0">
-      <div
-        id="header-carousel"
-        class="carousel slide carousel-fade"
-        data-bs-ride="carousel"
-      >
-        <div class="carousel-inner">
-          <!-- Slide Principal -->
-          <div class="carousel-item active">
-            <img
-              class="img-fluid"
-              src="img/carousel-1.jpg"
-              alt="Paneles Solares Panamá"
-              loading="lazy"
-            />
+    <section class="hero-section">
+      <img
+        class="hero-bg"
+        src="img/carousel-1.jpg"
+        alt="Paneles Solares Panamá"
+        loading="lazy"
+      />
+      <div class="hero-overlay"></div>
+      <div class="hero-decoration"></div>
+      <div class="hero-decoration-2"></div>
 
-            <!-- Overlay oscuro para mejorar contraste -->
-            <div
-              class="position-absolute top-0 start-0 w-100 h-100"
-              style="
-                background: linear-gradient(
-                  rgba(0, 0, 0, 0.35),
-                  rgba(0, 0, 0, 0.5)
-                );
-              "
-            ></div>
-
-            <div
-              class="carousel-caption d-flex flex-column align-items-center justify-content-center"
+      <div class="container hero-content">
+        <div class="row align-items-center">
+          <div class="col-lg-8">
+            <div class="hero-badge wow fadeInUp">
+              <i class="fa-solid fa-sun me-1"></i> Energía Solar Confiable
+            </div>
+            <h1 class="hero-title wow fadeInUp" data-wow-delay="0.1s">
+              Reduce tu factura eléctrica
+            </h1>
+            <div class="hero-amount wow fadeInUp" data-wow-delay="0.2s">
+              hasta un 80%
+            </div>
+            <p
+              class="fs-5 text-white mb-4 mt-3 wow fadeInUp"
+              data-wow-delay="0.3s"
+              style="text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6); max-width: 600px"
             >
-              <div class="p-3" style="max-width: 1000px">
-                <h4
-                  class="text-white text-uppercase mb-3 fw-bold"
-                  style="letter-spacing: 4px"
-                >
-                  Energía Solar Confiable en Panamá
-                </h4>
-                <h1 class="display-3 text-white fw-bold mb-3">
-                  Reduce tu factura eléctrica
-                </h1>
-                <h2 class="display-4 fw-bold mb-4" style="color: #4ade80">
-                  hasta un 80%
-                </h2>
-
-                <p
-                  class="fs-5 text-white mb-4"
-                  style="text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8)"
-                >
-                  Instalaciones profesionales para hogares y empresas en todo
-                  Panamá
-                </p>
-
-                <div class="d-flex justify-content-center gap-3 flex-wrap">
-                  <a
-                    href="#contact"
-                    class="btn btn-success btn-lg px-5 py-3 fw-bold"
-                  >
-                    ¡Quiero mi Cotización Gratis!
-                  </a>
-                  <a
-                    href="https://wa.me/50760017560?text=%C2%A1Hola%21%20Quiero%20informaci%C3%B3n%20sobre%20paneles%20solares."
-                    target="_blank"
-                    class="btn btn-outline-light btn-lg px-5 py-3 fw-bold"
-                  >
-                    <i class="fa-brands fa-whatsapp"></i> Hablar por WhatsApp
-                  </a>
-                </div>
-              </div>
+              Instalaciones profesionales para hogares y empresas en todo Panamá
+            </p>
+            <div
+              class="d-flex gap-3 flex-wrap wow fadeInUp"
+              data-wow-delay="0.4s"
+            >
+              <a
+                href="quote.html"
+                class="btn btn-gold btn-lg px-5 py-3 fw-bold"
+              >
+                ¡Quiero mi Cotización Gratis!
+              </a>
+              <a
+                href="https://wa.me/50760017560?text=%C2%A1Hola%21%20Quiero%20informaci%C3%B3n%20sobre%20paneles%20solares."
+                target="_blank"
+                class="btn btn-outline-light btn-lg px-5 py-3 fw-bold"
+              >
+                <i class="fa-brands fa-whatsapp me-2"></i> Hablar por WhatsApp
+              </a>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
     <!-- Hero End -->
 
     <!-- Feature Start -->
     <!-- Facts / Estadísticas Start -->
-    <div class="container-fluid bg-success py-5">
+    <div class="container-fluid facts-section py-5">
       <div class="container">
         <div class="row g-5 text-center">
           <!-- Contador 1 -->
@@ -420,8 +269,8 @@
 
           <!-- Contenido de texto -->
           <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">
-            <h6 class="text-success text-uppercase">Sobre Nosotros</h6>
-            <h1 class="mb-4">
+            <div class="section-tag">Sobre Nosotros</div>
+            <h1 class="section-title">
               Green Energy Technologie - Energía Solar en Panamá
             </h1>
 
@@ -496,21 +345,18 @@
     <div class="container-fluid py-5">
       <div class="container">
         <div class="text-center wow fadeInUp mb-5">
-          <h6 class="text-success text-uppercase">Lo que ofrecemos</h6>
-          <h1 class="mb-5">Servicios de Energía Solar</h1>
+          <div class="section-tag">Lo que ofrecemos</div>
+          <h1 class="section-title">Servicios de Energía Solar</h1>
         </div>
 
         <div class="row g-4">
           <div class="col-lg-4 col-md-6 wow fadeInUp">
-            <div class="service-item bg-light rounded h-100 p-5 text-center">
-              <div
-                class="d-flex align-items-center justify-content-center bg-white rounded-circle mx-auto mb-4"
-                style="width: 90px; height: 90px"
-              >
-                <i class="fa-solid fa-sun text-primary fa-4x"></i>
+            <div class="service-card">
+              <div class="service-icon-wrap">
+                <i class="fa-solid fa-sun"></i>
               </div>
               <h4>Instalación de Paneles Solares</h4>
-              <p>
+              <p class="text-muted">
                 Diseño e instalación profesional de sistemas fotovoltaicos para
                 residencias y comercios.
               </p>
@@ -518,15 +364,12 @@
           </div>
 
           <div class="col-lg-4 col-md-6 wow fadeInUp">
-            <div class="service-item bg-light rounded h-100 p-5 text-center">
-              <div
-                class="d-flex align-items-center justify-content-center bg-white rounded-circle mx-auto mb-4"
-                style="width: 90px; height: 90px"
-              >
-                <i class="fa-solid fa-chart-line text-primary fa-4x"></i>
+            <div class="service-card">
+              <div class="service-icon-wrap">
+                <i class="fa-solid fa-chart-line"></i>
               </div>
               <h4>Estudio y Asesoría Energética</h4>
-              <p>
+              <p class="text-muted">
                 Análisis detallado de tu consumo eléctrico y propuesta
                 personalizada según tu techo y necesidades.
               </p>
@@ -534,15 +377,12 @@
           </div>
 
           <div class="col-lg-4 col-md-6 wow fadeInUp">
-            <div class="service-item bg-light rounded h-100 p-5 text-center">
-              <div
-                class="d-flex align-items-center justify-content-center bg-white rounded-circle mx-auto mb-4"
-                style="width: 90px; height: 90px"
-              >
-                <i class="fa-solid fa-wrench text-primary fa-4x"></i>
+            <div class="service-card">
+              <div class="service-icon-wrap">
+                <i class="fa-solid fa-wrench"></i>
               </div>
               <h4>Mantenimiento y Soporte</h4>
-              <p>
+              <p class="text-muted">
                 Limpieza, monitoreo y mantenimiento preventivo para maximizar el
                 rendimiento de tu sistema.
               </p>
@@ -558,19 +398,19 @@
     <div class="container-fluid py-5">
       <div class="container">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-          <h6 class="text-success text-uppercase">¿Por qué nosotros?</h6>
-          <h1 class="mb-5">Razones para elegir Green Energy Technologie</h1>
+          <div class="section-tag">¿Por qué nosotros?</div>
+          <h1 class="section-title">Razones para elegir Green Energy Technologie</h1>
         </div>
 
         <div class="row g-4">
           <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-            <div class="d-flex h-100">
-              <div class="flex-shrink-0 bg-success text-white p-4 rounded">
-                <i class="fa fa-flag fa-3x"></i>
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fa fa-flag"></i>
               </div>
-              <div class="ps-4">
-                <h4>Experiencia Local</h4>
-                <p>
+              <div>
+                <h5>Experiencia Local</h5>
+                <p class="text-muted mb-0">
                   Somos una empresa 100% panameña que conoce las condiciones
                   climáticas, normativas y necesidades reales de Panamá.
                 </p>
@@ -579,13 +419,13 @@
           </div>
 
           <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-            <div class="d-flex h-100">
-              <div class="flex-shrink-0 bg-success text-white p-4 rounded">
-                <i class="fa fa-shield-alt fa-3x"></i>
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fa fa-shield-alt"></i>
               </div>
-              <div class="ps-4">
-                <h4>Garantía Real</h4>
-                <p>
+              <div>
+                <h5>Garantía Real</h5>
+                <p class="text-muted mb-0">
                   25 años en paneles solares y 10 años en inversores. Soporte
                   técnico local post-venta.
                 </p>
@@ -594,13 +434,13 @@
           </div>
 
           <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-            <div class="d-flex h-100">
-              <div class="flex-shrink-0 bg-success text-white p-4 rounded">
-                <i class="fa-solid fa-tools fa-3x"></i>
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fa-solid fa-tools"></i>
               </div>
-              <div class="ps-4">
-                <h4>Instalación Profesional</h4>
-                <p>
+              <div>
+                <h5>Instalación Profesional</h5>
+                <p class="text-muted mb-0">
                   Equipo técnico certificado con más de 8 años de experiencia en
                   instalaciones solares.
                 </p>
@@ -609,13 +449,13 @@
           </div>
 
           <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-            <div class="d-flex h-100">
-              <div class="flex-shrink-0 bg-success text-white p-4 rounded">
-                <i class="fa fa-hand-holding-dollar fa-3x"></i>
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fa fa-hand-holding-dollar"></i>
               </div>
-              <div class="ps-4">
-                <h4>Financiamiento Disponible</h4>
-                <p>
+              <div>
+                <h5>Financiamiento Disponible</h5>
+                <p class="text-muted mb-0">
                   Opciones de financiamiento accesibles para que empieces a
                   ahorrar desde el primer mes.
                 </p>
@@ -624,13 +464,13 @@
           </div>
 
           <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-            <div class="d-flex h-100">
-              <div class="flex-shrink-0 bg-success text-white p-4 rounded">
-                <i class="fa fa-headset fa-3x"></i>
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fa fa-headset"></i>
               </div>
-              <div class="ps-4">
-                <h4>Soporte Continuo</h4>
-                <p>
+              <div>
+                <h5>Soporte Continuo</h5>
+                <p class="text-muted mb-0">
                   Monitoreo remoto y atención personalizada durante toda la vida
                   útil de tu sistema.
                 </p>
@@ -639,13 +479,13 @@
           </div>
 
           <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-            <div class="d-flex h-100">
-              <div class="flex-shrink-0 bg-success text-white p-4 rounded">
-                <i class="fa fa-leaf fa-3x"></i>
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fa fa-leaf"></i>
               </div>
-              <div class="ps-4">
-                <h4>Impacto Ambiental</h4>
-                <p>
+              <div>
+                <h5>Impacto Ambiental</h5>
+                <p class="text-muted mb-0">
                   Contribuye a un Panamá más verde reduciendo emisiones de CO₂
                   con energía limpia.
                 </p>
@@ -663,8 +503,8 @@
     <div class="container-fluid py-5">
       <div class="container">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-          <h6 class="text-success text-uppercase">Preguntas Frecuentes</h6>
-          <h1 class="mb-5">Todo lo que necesitas saber</h1>
+          <div class="section-tag">Preguntas Frecuentes</div>
+          <h1 class="section-title">Todo lo que necesitas saber</h1>
         </div>
 
         <div class="row g-4">
@@ -810,25 +650,24 @@
     <div class="container-fluid py-5">
       <div class="container">
         <div class="text-center wow fadeInUp mb-5">
-          <h6 class="text-success text-uppercase">Instalaciones Realizadas</h6>
-          <h1 class="mb-4">Proyectos en Panamá</h1>
+          <div class="section-tag">Instalaciones Realizadas</div>
+          <h1 class="section-title">Proyectos en Panamá</h1>
           <p class="fs-5">Conoce algunos de nuestros trabajos más recientes</p>
         </div>
 
         <div class="row g-4">
           <!-- Puedes duplicar este bloque cuantas veces necesites -->
           <div class="col-lg-4 col-md-6 wow fadeInUp">
-            <div class="project-item rounded overflow-hidden">
+            <div class="project-card">
               <img
-                class="img-fluid"
                 src="img/project-1.jpg"
                 alt="Proyecto Costa del Este"
                 loading="lazy"
               />
               <div class="p-4">
                 <h4>Residencia en Costa del Este</h4>
-                <p><strong>8.2 kW</strong> • Ahorro: 78%</p>
-                <p class="text-muted">
+                <p class="text-success fw-bold">8.2 kW • Ahorro: 78%</p>
+                <p class="text-muted mb-0">
                   Instalación residencial completa - 2025
                 </p>
               </div>
@@ -836,33 +675,31 @@
           </div>
 
           <div class="col-lg-4 col-md-6 wow fadeInUp">
-            <div class="project-item rounded overflow-hidden">
+            <div class="project-card">
               <img
-                class="img-fluid"
                 src="img/project-2.jpg"
                 alt="Proyecto Arraiján"
                 loading="lazy"
               />
               <div class="p-4">
                 <h4>Supermercado en Arraiján</h4>
-                <p><strong>35 kW</strong> • Ahorro: 65%</p>
-                <p class="text-muted">Sistema comercial con monitoreo remoto</p>
+                <p class="text-success fw-bold">35 kW • Ahorro: 65%</p>
+                <p class="text-muted mb-0">Sistema comercial con monitoreo remoto</p>
               </div>
             </div>
           </div>
 
           <div class="col-lg-4 col-md-6 wow fadeInUp">
-            <div class="project-item rounded overflow-hidden">
+            <div class="project-card">
               <img
-                class="img-fluid"
                 src="img/project-3.jpg"
                 alt="Proyecto Coronado"
                 loading="lazy"
               />
               <div class="p-4">
                 <h4>Casa en Coronado</h4>
-                <p><strong>12.5 kW</strong> • Ahorro: 82%</p>
-                <p class="text-muted">Sistema con baterías de respaldo</p>
+                <p class="text-success fw-bold">12.5 kW • Ahorro: 82%</p>
+                <p class="text-muted mb-0">Sistema con baterías de respaldo</p>
               </div>
             </div>
           </div>
@@ -1012,20 +849,17 @@
     <div class="container-fluid py-5">
       <div class="container">
         <div class="text-center wow fadeInUp mb-5">
-          <h6 class="text-success text-uppercase">Expertos en Energía Solar</h6>
-          <h1 class="mb-5">Conoce a Nuestro Equipo</h1>
+          <div class="section-tag">Expertos en Energía Solar</div>
+          <h1 class="section-title">Conoce a Nuestro Equipo</h1>
         </div>
 
         <div class="row g-4">
           <div class="col-lg-3 col-md-6 wow fadeInUp">
-            <div class="team-item bg-light rounded overflow-hidden">
-              <div class="position-relative">
-                <img class="img-fluid" src="img/team-1.jpg" alt="" />
-              </div>
+            <div class="team-card">
+              <img class="img-fluid" src="img/team-1.jpg" alt="" />
               <div class="text-center p-4">
-                <!-- <h5 class="mb-1">Ing. Luis Martínez</h5> -->
-                <span class="text-primary">Fundador & Director Técnico</span>
-                <p class="mt-3">
+                <span class="text-success fw-bold">Fundador & Director Técnico</span>
+                <p class="text-muted mt-2 mb-0">
                   Más de 8 años instalando sistemas solares en Panamá.
                 </p>
               </div>
@@ -1033,14 +867,11 @@
           </div>
 
           <div class="col-lg-3 col-md-6 wow fadeInUp">
-            <div class="team-item bg-light rounded overflow-hidden">
-              <div class="position-relative">
-                <img class="img-fluid" src="img/team-2.jpg" alt="" />
-              </div>
+            <div class="team-card">
+              <img class="img-fluid" src="img/team-2.jpg" alt="" />
               <div class="text-center p-4">
-                <!-- <h5 class="mb-1">Ana Rodríguez</h5> -->
-                <span class="text-primary">Asesora Comercial</span>
-                <p class="mt-3">
+                <span class="text-success fw-bold">Asesora Comercial</span>
+                <p class="text-muted mt-2 mb-0">
                   Especialista en financiamiento y atención al cliente.
                 </p>
               </div>
@@ -1048,27 +879,21 @@
           </div>
 
           <div class="col-lg-3 col-md-6 wow fadeInUp">
-            <div class="team-item bg-light rounded overflow-hidden">
-              <div class="position-relative">
-                <img class="img-fluid" src="img/team-3.jpg" alt="" />
-              </div>
+            <div class="team-card">
+              <img class="img-fluid" src="img/team-3.jpg" alt="" />
               <div class="text-center p-4">
-                <!-- <h5 class="mb-1">Ing. Miguel Santos</h5> -->
-                <span class="text-primary">Jefe de Instalaciones</span>
-                <p class="mt-3">Certificado en sistemas fotovoltaicos.</p>
+                <span class="text-success fw-bold">Jefe de Instalaciones</span>
+                <p class="text-muted mt-2 mb-0">Certificado en sistemas fotovoltaicos.</p>
               </div>
             </div>
           </div>
 
           <div class="col-lg-3 col-md-6 wow fadeInUp">
-            <div class="team-item bg-light rounded overflow-hidden">
-              <div class="position-relative">
-                <img class="img-fluid" src="img/team-4.jpg" alt="" />
-              </div>
+            <div class="team-card">
+              <img class="img-fluid" src="img/team-4.jpg" alt="" />
               <div class="text-center p-4">
-                <!-- <h5 class="mb-1">Carla López</h5> -->
-                <span class="text-primary">Servicio al Cliente</span>
-                <p class="mt-3">Encargada del seguimiento post-venta.</p>
+                <span class="text-success fw-bold">Servicio al Cliente</span>
+                <p class="text-muted mt-2 mb-0">Encargada del seguimiento post-venta.</p>
               </div>
             </div>
           </div>
@@ -1081,80 +906,76 @@
     <div class="container-fluid py-5 bg-light">
       <div class="container">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-          <h6 class="text-success text-uppercase">Testimonios</h6>
-          <h1 class="mb-5">Lo que dicen nuestros clientes</h1>
+          <div class="section-tag">Testimonios</div>
+          <h1 class="section-title">Lo que dicen nuestros clientes</h1>
         </div>
 
         <div class="row g-4">
-          <!-- Testimonio 1 -->
           <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-            <div class="testimonial-item bg-white rounded p-5">
-              <div class="d-flex align-items-center mb-4">
+            <div class="testimonial-card">
+              <div class="d-flex align-items-center mb-3">
                 <img
-                  class="img-fluid flex-shrink-0 rounded-circle"
+                  class="flex-shrink-0 rounded-circle"
                   src="img/testimonial-1.jpg"
-                  style="width: 65px; height: 65px"
+                  style="width: 56px; height: 56px; object-fit: cover"
                   alt="Juan Pérez"
                 />
                 <div class="ms-3">
-                  <h5 class="mb-1">Juan Pérez</h5>
-                  <span class="text-success">Costa del Este, Panamá</span>
+                  <h5 class="mb-0">Juan Pérez</h5>
+                  <small class="text-success">Costa del Este, Panamá</small>
                 </div>
               </div>
-              <p class="mb-4">
+              <p class="mb-3">
                 "Gracias a Green Energy Technologie redujimos nuestra factura de
-                luz en un **78%**. La instalación fue rápida y el equipo muy
-                profesional. Totalmente recomendados."
+                luz en un 78%. La instalación fue rápida y el equipo muy
+                profesional."
               </p>
-              <div class="text-warning">★★★★★</div>
+              <div class="text-warning small">★★★★★</div>
             </div>
           </div>
 
-          <!-- Testimonio 2 -->
           <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-            <div class="testimonial-item bg-white rounded p-5">
-              <div class="d-flex align-items-center mb-4">
+            <div class="testimonial-card">
+              <div class="d-flex align-items-center mb-3">
                 <img
-                  class="img-fluid flex-shrink-0 rounded-circle"
+                  class="flex-shrink-0 rounded-circle"
                   src="img/testimonial-2.jpg"
-                  style="width: 65px; height: 65px"
+                  style="width: 56px; height: 56px; object-fit: cover"
                   alt="María González"
                 />
                 <div class="ms-3">
-                  <h5 class="mb-1">María González</h5>
-                  <span class="text-success">Arraiján, Panamá</span>
+                  <h5 class="mb-0">María González</h5>
+                  <small class="text-success">Arraiján, Panamá</small>
                 </div>
               </div>
-              <p class="mb-4">
+              <p class="mb-3">
                 "Excelente servicio. Desde la cotización hasta la instalación
                 todo fue transparente. Ya estamos produciendo nuestra propia
-                energía. Muy satisfecha."
+                energía."
               </p>
-              <div class="text-warning">★★★★★</div>
+              <div class="text-warning small">★★★★★</div>
             </div>
           </div>
 
-          <!-- Testimonio 3 -->
           <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-            <div class="testimonial-item bg-white rounded p-5">
-              <div class="d-flex align-items-center mb-4">
+            <div class="testimonial-card">
+              <div class="d-flex align-items-center mb-3">
                 <img
-                  class="img-fluid flex-shrink-0 rounded-circle"
+                  class="flex-shrink-0 rounded-circle"
                   src="img/testimonial-3.jpg"
-                  style="width: 65px; height: 65px"
+                  style="width: 56px; height: 56px; object-fit: cover"
                   alt="Carlos Rodríguez"
                 />
                 <div class="ms-3">
-                  <h5 class="mb-1">Carlos Rodríguez</h5>
-                  <span class="text-success">Coronado, Panamá</span>
+                  <h5 class="mb-0">Carlos Rodríguez</h5>
+                  <small class="text-success">Coronado, Panamá</small>
                 </div>
               </div>
-              <p class="mb-4">
+              <p class="mb-3">
                 "El ahorro es real. En los primeros 3 meses ya recuperamos buena
-                parte de la inversión. El soporte post-venta es muy bueno. 100%
-                recomendado."
+                parte de la inversión. El soporte post-venta es excelente."
               </p>
-              <div class="text-warning">★★★★★</div>
+              <div class="text-warning small">★★★★★</div>
             </div>
           </div>
         </div>
