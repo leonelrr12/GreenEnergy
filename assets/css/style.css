@@ -147,7 +147,9 @@ h1, h2, h3, h4, h5, h6 {
   top: -100px;
   transition: 0.4s;
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   background: rgba(255, 255, 255, 0.92) !important;
+  z-index: 1030;
 }
 
 .navbar .navbar-nav .nav-link {
