@@ -1,4 +1,4 @@
-# Green Energy Technologie - Sitio Web
+# Green Energy Technologies - Sitio Web
 
 ## Estructura
 - **Ubicación**: `/var/www/apps/greenenergy/` (bind-mount a `/root/apps/greenenergy/`)
