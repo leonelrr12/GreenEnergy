@@ -54,7 +54,10 @@
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="assets/css/style.css" />
 
-    
+    <style>
+      .tabular-nums { font-variant-numeric: tabular-nums; }
+    </style>
+
     <link rel="apple-touch-icon" href="img/logo.webp" />
 
 
@@ -145,6 +148,7 @@
             <a href="about.html" class="nav-item nav-link">Sobre Nosotros</a>
             <a href="service.html" class="nav-item nav-link">Servicios</a>
             <a href="project.html" class="nav-item nav-link">Proyectos</a>
+            <a href="blog.html" class="nav-item nav-link">Blog</a>
             <a href="quote.html" class="nav-item nav-link">Cotización</a>
             <a href="contact.html" class="nav-item nav-link">Contacto</a>
           </div>
@@ -181,7 +185,7 @@
           <div class="col-lg-8">
             <div class="bg-light p-5 rounded">
               <h2 class="text-center mb-5">Solicita tu Cotización Gratis</h2>
-              <form id="quoteForm" onsubmit="return enviarCotizacion(event)">
+              <form id="quoteForm">
                 <div class="row g-4">
                   <div class="col-md-6">
                     <input
@@ -234,8 +238,60 @@
                       placeholder="Cuéntanos más sobre tu proyecto..."
                     ></textarea>
                   </div>
+                  <!-- Calculadora Solar - visible solo cuando se selecciona Paneles -->
+                  <div id="solar-calculator" style="display:none" class="col-12">
+                    <div class="bg-white p-4 rounded shadow-sm border mt-3">
+                      <h5 class="text-center mb-3">🧮 Calculadora de Cotización Solar</h5>
+                      <p class="text-center text-muted small">Basado en tu consumo mensual de electricidad, aquí tienes una estimación personalizada.</p>
+                      <div class="row g-3 mb-3 align-items-end">
+                        <div class="col-md-8">
+                          <label class="form-label fw-bold">Consumo mensual (kWh)</label>
+                          <input
+                            type="number"
+                            id="q-kwh"
+                            class="form-control form-control-lg"
+                            value="850"
+                            min="1"
+                            step="1"
+                          />
+                          <small class="text-muted">Encuentra este dato en tu factura de luz. Valor de referencia: 850 kWh.</small>
+                        </div>
+                        <div class="col-md-4">
+                          <button type="button" id="calc-btn" class="btn btn-success btn-lg w-100">Calcular</button>
+                        </div>
+                      </div>
+                      <div id="calc-results" style="display:none">
+                        <hr />
+                        <h6 class="fw-bold">📋 Cotización Estimada</h6>
+                        <div class="table-responsive">
+                          <table class="table table-bordered mb-2">
+                            <tbody>
+                              <tr>
+                                <td>A. Equipamiento y trámites</td>
+                                <td class="text-end fw-bold tabular-nums" id="calc-equipment">$5,200.00</td>
+                              </tr>
+                              <tr>
+                                <td>B. Ingeniería y diseño</td>
+                                <td class="text-end fw-bold tabular-nums">$700.00</td>
+                              </tr>
+                              <tr>
+                                <td>C. Instalación</td>
+                                <td class="text-end fw-bold tabular-nums" id="calc-installation">$1,400.00</td>
+                              </tr>
+                              <tr class="table-success">
+                                <th>TOTAL DE LA INVERSIÓN</th>
+                                <th class="text-end tabular-nums" id="calc-total">$7,300.00</th>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <p class="text-muted small mb-0">* No incluye ITBMS | Incluye gestión de permisos (Municipalidad, Bomberos, ENSA/Naturgy)</p>
+                        <p class="text-muted small">Esta cotización se incluirá automáticamente al enviar el formulario.</p>
+                      </div>
+                    </div>
+                  </div>
                   <div class="col-12 text-center">
-                    <button id="q-submit" type="submit" class="btn btn-success btn-lg px-5">
+                    <button id="q-submit" type="button" class="btn btn-success btn-lg px-5" onclick="enviarCotizacion()">
                       Solicitar Cotización
                     </button>
                   </div>
@@ -295,6 +351,7 @@
             >
             <a class="btn btn-link text-light" href="service.html">Servicios</a>
             <a class="btn btn-link text-light" href="project.html">Proyectos</a>
+            <a class="btn btn-link text-light" href="blog.html">Blog</a>
             <a class="btn btn-link text-light" href="quote.html">Cotización</a>
             <a class="btn btn-link text-light" href="contact.html">Contacto</a>
             <a class="btn btn-link text-light" href="privacy.html">Políticas de Privacidad</a>
@@ -794,41 +851,154 @@
 
     <script>
       // --- FUNCIÓN DE ENVÍO DEL FORMULARIO DE COTIZACIÓN ---
-      async function enviarCotizacion(e) {
-        e.preventDefault();
-        const btn = document.getElementById('q-submit');
+      function getVal(id) {
+        var el = document.getElementById(id);
+        return el ? el.textContent : '';
+      }
+      function buildQuotePayload() {
+        var obj = {
+          name: document.getElementById('q-name').value,
+          phone: document.getElementById('q-phone').value,
+          contactPhone: document.getElementById('q-phone').value,
+          email: document.getElementById('q-email').value || undefined,
+          serviceInterest: document.getElementById('q-service').value || undefined,
+          budget: (function() {
+            var svc = document.getElementById('q-service').value;
+            if (svc && svc.indexOf('paneles') !== -1) {
+              var calc = document.getElementById('calc-results');
+              if (calc && calc.style.display !== 'none') {
+                return getVal('calc-total').replace('$', '') || undefined;
+              }
+            }
+            return document.getElementById('q-budget').value || undefined;
+          })(),
+          notes: (function() {
+            var n = document.getElementById('q-notes').value || '';
+            var svc = document.getElementById('q-service').value;
+            if (svc && svc.indexOf('paneles') !== -1) {
+              var calc = document.getElementById('calc-results');
+              if (calc && calc.style.display !== 'none') {
+                n += (n ? '\n\n' : '') +
+                  '=== COTIZACIÓN CALCULADA ===\n' +
+                  'Consumo: ' + (document.getElementById('q-kwh').value || '') + ' kWh\n' +
+                  'Equipamiento: ' + getVal('calc-equipment') + '\n' +
+                  'Paneles: ' + (document.getElementById('calc-panels') ? document.getElementById('calc-panels').textContent : '') + '\n' +
+                  'Instalaci\u00f3n: ' + getVal('calc-installation') + '\n' +
+                  'Total: ' + getVal('calc-total');
+              }
+            }
+            return n || undefined;
+          })(),
+          source: 'web-quote',
+        };
+        return obj;
+      }
+      function enviarCotizacion() {
+        var f = document.getElementById('quoteForm');
+        if (!f.reportValidity()) return;
+        var btn = document.getElementById('q-submit');
         btn.disabled = true;
         btn.textContent = 'Enviando...';
+        var payload;
         try {
-          const res = await fetch('/api/public/lead', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              name: document.getElementById('q-name').value,
-              phone: document.getElementById('q-phone').value,
-              contactPhone: document.getElementById('q-phone').value,
-              email: document.getElementById('q-email').value || undefined,
-              serviceInterest: document.getElementById('q-service').value || undefined,
-              budget: document.getElementById('q-budget').value || undefined,
-              notes: document.getElementById('q-notes').value || undefined,
-              source: 'web-quote',
-            }),
-          });
-          if (res.ok) {
-            document.getElementById('quoteForm').style.display = 'none';
+          payload = JSON.stringify(buildQuotePayload());
+        } catch (e) { console.error(e); alert('Error al preparar datos. Intenta de nuevo.'); btn.disabled = false; btn.textContent = 'Solicitar Cotizaci\u00f3n'; return; }
+        fetch('/api/public/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload })
+          .then(function(r) { return r.ok ? r.json() : r.json().then(function(d) { throw new Error(d.error || 'Error al enviar'); }); })
+          .then(function() {
+            f.style.display = 'none';
             document.getElementById('q-success').style.display = 'block';
-          } else {
-            const data = await res.json();
-            alert(data.error || 'Error al enviar. Intenta de nuevo.');
-          }
-        } catch {
-          alert('Error de conexión. Intenta de nuevo.');
-        } finally {
-          btn.disabled = false;
-          btn.textContent = 'Solicitar Cotización';
-        }
-        return false;
+            var email = document.getElementById('q-email').value;
+            if (email) {
+              var name = document.getElementById('q-name').value;
+              var svc = document.getElementById('q-service').value;
+              var budget;
+              if (svc && svc.indexOf('paneles') !== -1) {
+                var calc = document.getElementById('calc-results');
+                if (calc && calc.style.display !== 'none') {
+                  budget = getVal('calc-total');
+                } else {
+                  budget = document.getElementById('q-budget').value;
+                }
+              } else {
+                budget = document.getElementById('q-budget').value;
+              }
+              fetch('/api/mailer/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer Este_es_un_token_super_12_potente' },
+                body: JSON.stringify({
+                  to: email,
+                  subject: 'Recibimos tu solicitud de cotizaci\u00f3n - Green Energy Technologies',
+                  html: '<div style="font-family: Arial, sans-serif; max-width:600px; margin:0 auto; padding:20px; border:1px solid #e0e0e0; border-radius:8px;"><div style="text-align:center; margin-bottom:20px;"><img src="https://greenenergytechnologie.com/img/logo.png" alt="Green Energy Technologies" style="max-width:200px;"></div><h2 style="color:#2e7d32;">\u00a1Gracias por tu inter\u00e9s, ' + name + '!</h2><p>Hemos recibido tu solicitud de cotizaci\u00f3n y uno de nuestros asesores te contactar\u00e1 pronto.</p><table style="width:100%; border-collapse:collapse; margin:20px 0;"><tr><td style="padding:8px; border-bottom:1px solid #e0e0e0; color:#666;">Servicio</td><td style="padding:8px; border-bottom:1px solid #e0e0e0; font-weight:bold;">' + (svc || 'No especificado') + '</td></tr><tr><td style="padding:8px; border-bottom:1px solid #e0e0e0; color:#666;">Presupuesto estimado</td><td style="padding:8px; border-bottom:1px solid #e0e0e0; font-weight:bold;">' + (budget || 'Por definir') + '</td></tr></table><p style="color:#666;">Si tienes alguna duda, puedes contactarnos por WhatsApp al <strong>+507 6001-7560</strong> o llamarnos al <strong>+507 6749-9134</strong>.</p><hr style="border:none; border-top:1px solid #e0e0e0; margin:20px 0;"><p style="color:#999; font-size:12px; text-align:center;">Green Energy Technologies - Panam\u00e1</p></div>',
+                  text: 'Gracias por tu inter\u00e9s ' + name + '. Recibimos tu solicitud de cotizaci\u00f3n. Te contactaremos pronto.',
+                }),
+              }).catch(function(e) { console.error('Error al enviar correo:', e); });
+            }
+          })
+          .catch(function(err) {
+            alert(err.message || 'Error de conexi\u00f3n. Intenta de nuevo.');
+          })
+          .finally(function() {
+            btn.disabled = false;
+            btn.textContent = 'Solicitar Cotizaci\u00f3n';
+          });
       }
+
+      // --- CALCULADORA SOLAR (solo para Paneles Residenciales/Comerciales) ---
+      function fmt$(n) {
+        return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      }
+      function calcularCotizacion() {
+        const kWh = parseFloat(document.getElementById('q-kwh').value) || 0;
+        if (kWh <= 0) return;
+
+        const equipment = (kWh * 5200) / 850;
+        const panels = Math.ceil((kWh * 14) / 850);
+        const installation = panels * 100;
+        const fixed = 700;
+        const total = equipment + installation + fixed;
+
+        document.getElementById('calc-equipment').textContent = fmt$(equipment);
+        document.getElementById('calc-installation').textContent = fmt$(installation);
+        document.getElementById('calc-total').textContent = fmt$(total);
+        document.getElementById('calc-results').style.display = 'block';
+      }
+
+      document.addEventListener('DOMContentLoaded', function() {
+        const serviceSelect = document.getElementById('q-service');
+        const kwhInput = document.getElementById('q-kwh');
+        const calcBtn = document.getElementById('calc-btn');
+        const budgetField = document.getElementById('q-budget');
+        const calculator = document.getElementById('solar-calculator');
+
+        function toggleCalculator() {
+          const val = serviceSelect.value;
+          const isPanel = val === 'paneles residenciales' || val === 'paneles comerciales';
+          calculator.style.display = isPanel ? 'block' : 'none';
+          budgetField.placeholder = isPanel
+            ? 'Consumo mensual en kWh (ej: 850)'
+            : 'Consumo mensual aproximado (en dólares)';
+          if (isPanel) calcularCotizacion();
+        }
+
+        serviceSelect.addEventListener('change', toggleCalculator);
+        calcBtn.addEventListener('click', calcularCotizacion);
+        kwhInput.addEventListener('input', function() {
+          calcularCotizacion();
+          var svc = serviceSelect.value;
+          if (svc === 'paneles residenciales' || svc === 'paneles comerciales') {
+            budgetField.value = kwhInput.value;
+          }
+        });
+        budgetField.addEventListener('input', function() {
+          var svc = serviceSelect.value;
+          if (svc === 'paneles residenciales' || svc === 'paneles comerciales') {
+            kwhInput.value = budgetField.value;
+            calcularCotizacion();
+          }
+        });
+        toggleCalculator();
+      });
     </script>
 
     <script>

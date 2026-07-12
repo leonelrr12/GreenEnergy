@@ -145,6 +145,7 @@
             <a href="about.html" class="nav-item nav-link">Sobre Nosotros</a>
             <a href="service.html" class="nav-item nav-link">Servicios</a>
             <a href="project.html" class="nav-item nav-link">Proyectos</a>
+            <a href="blog.html" class="nav-item nav-link">Blog</a>
             <a href="quote.html" class="nav-item nav-link">Cotización</a>
             <a href="contact.html" class="nav-item nav-link">Contacto</a>
           </div>
@@ -216,6 +217,14 @@
                 </div>
               </div>
 
+              <div class="mt-5">
+                <h5>Horario de Atención</h5>
+                <p>
+                  <strong>Lunes a Viernes:</strong> 8:00 am - 6:00 pm<br />
+                  <strong>Sábados:</strong> 8:00 am - 2:00 pm
+                </p>
+              </div>
+
               <a
                 href="https://wa.me/50760017560?text=%C2%A1Hola%21%20Quiero%20informaci%C3%B3n%20sobre%20paneles%20solares."
                 target="_blank"
@@ -231,7 +240,7 @@
           <div class="col-lg-7 wow fadeIn" data-wow-delay="0.5s">
             <div class="bg-light p-5 rounded">
               <h4 class="mb-4">Solicitar Información</h4>
-              <form id="contactForm" onsubmit="return enviarContacto(event)">
+              <form id="contactForm">
                 <div class="row g-3">
                   <div class="col-md-6">
                     <input id="c-name" type="text" class="form-control" placeholder="Nombre completo *" required />
@@ -261,7 +270,7 @@
                     <textarea id="c-notes" class="form-control" rows="5" placeholder="Cuéntanos sobre tu proyecto..."></textarea>
                   </div>
                   <div class="col-12">
-                    <button id="c-submit" type="submit" class="btn btn-success btn-lg w-100 py-3">
+                    <button id="c-submit" type="button" class="btn btn-success btn-lg w-100 py-3" onclick="enviarContacto()">
                       Solicitar Información
                     </button>
                   </div>
@@ -275,41 +284,54 @@
             </div>
           </div>
           <script>
-          async function enviarContacto(e) {
-            e.preventDefault();
+          function enviarContacto() {
+            const f = document.getElementById('contactForm');
+            if (!f.reportValidity()) return;
             const btn = document.getElementById('c-submit');
             btn.disabled = true;
             btn.textContent = 'Enviando...';
-            try {
-              const res = await fetch('/api/public/lead', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  name: document.getElementById('c-name').value,
-                  phone: document.getElementById('c-phone').value,
-                  contactPhone: document.getElementById('c-phone').value,
-                  email: document.getElementById('c-email').value || undefined,
-                  serviceInterest: document.getElementById('c-service').value || undefined,
-                  city: document.getElementById('c-city').value || undefined,
-                  budget: document.getElementById('c-budget').value || undefined,
-                  notes: document.getElementById('c-notes').value || undefined,
-                  source: 'web',
-                }),
-              });
-              if (res.ok) {
-                document.getElementById('contactForm').style.display = 'none';
+            fetch('/api/public/lead', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: document.getElementById('c-name').value,
+                phone: document.getElementById('c-phone').value,
+                contactPhone: document.getElementById('c-phone').value,
+                email: document.getElementById('c-email').value || undefined,
+                serviceInterest: document.getElementById('c-service').value || undefined,
+                city: document.getElementById('c-city').value || undefined,
+                budget: document.getElementById('c-budget').value || undefined,
+                notes: document.getElementById('c-notes').value || undefined,
+                source: 'web',
+              }),
+            })
+              .then(function(r) { return r.ok ? r.json() : r.json().then(function(d) { throw new Error(d.error || 'Error al enviar'); }); })
+              .then(function() {
+                f.style.display = 'none';
                 document.getElementById('c-success').style.display = 'block';
-              } else {
-                const data = await res.json();
-                alert(data.error || 'Error al enviar. Intenta de nuevo.');
-              }
-            } catch {
-              alert('Error de conexión. Intenta de nuevo.');
-            } finally {
-              btn.disabled = false;
-              btn.textContent = 'Solicitar Información';
-            }
-            return false;
+                const email = document.getElementById('c-email').value;
+                if (email) {
+                  const name = document.getElementById('c-name').value;
+                  const service = document.getElementById('c-service').value;
+                  fetch('/api/mailer/send-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer Este_es_un_token_super_12_potente' },
+                    body: JSON.stringify({
+                      to: email,
+                      subject: 'Recibimos tu solicitud de informaci\u00f3n - Green Energy Technologies',
+                      html: '<div style="font-family: Arial, sans-serif; max-width:600px; margin:0 auto; padding:20px; border:1px solid #e0e0e0; border-radius:8px;"><div style="text-align:center; margin-bottom:20px;"><img src="https://greenenergytechnologie.com/img/logo.png" alt="Green Energy Technologies" style="max-width:200px;"></div><h2 style="color:#2e7d32;">\u00a1Gracias por contactarnos, ' + name + '!</h2><p>Hemos recibido tu solicitud de informaci\u00f3n y uno de nuestros asesores te contactar\u00e1 pronto.</p><table style="width:100%; border-collapse:collapse; margin:20px 0;"><tr><td style="padding:8px; border-bottom:1px solid #e0e0e0; color:#666;">Servicio de inter\u00e9s</td><td style="padding:8px; border-bottom:1px solid #e0e0e0; font-weight:bold;">' + (service || 'No especificado') + '</td></tr></table><p style="color:#666;">Si tienes alguna duda, puedes contactarnos por WhatsApp al <strong>+507 6001-7560</strong> o llamarnos al <strong>+507 6749-9134</strong>.</p><hr style="border:none; border-top:1px solid #e0e0e0; margin:20px 0;"><p style="color:#999; font-size:12px; text-align:center;">Green Energy Technologies - Panam\u00e1</p></div>',
+                      text: 'Gracias por contactarnos, ' + name + '. Recibimos tu solicitud de informaci\u00f3n. Te contactaremos pronto.',
+                    }),
+                  }).catch(function(e) { console.error('Error al enviar correo:', e); });
+                }
+              })
+              .catch(function(err) {
+                alert(err.message || 'Error de conexi\u00f3n. Intenta de nuevo.');
+              })
+              .finally(function() {
+                btn.disabled = false;
+                btn.textContent = 'Solicitar Informaci\u00f3n';
+              });
           }
           </script>
         </div>
@@ -360,6 +382,7 @@
             >
             <a class="btn btn-link text-light" href="service.html">Servicios</a>
             <a class="btn btn-link text-light" href="project.html">Proyectos</a>
+            <a class="btn btn-link text-light" href="blog.html">Blog</a>
             <a class="btn btn-link text-light" href="quote.html">Cotización</a>
             <a class="btn btn-link text-light" href="contact.html">Contacto</a>
             <a class="btn btn-link text-light" href="privacy.html">Políticas de Privacidad</a>
